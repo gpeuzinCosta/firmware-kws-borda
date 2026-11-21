@@ -6,7 +6,7 @@ reconheceu. Tudo roda no próprio chip, sem Wi-Fi e sem computador: o MFCC, a re
 
 | Ação | Botão |
 |---|---|
-| Ouvir um comando (1,5 s) | clique curto |
+| Ouvir um comando (2 s, depois de 150 ms) | clique curto |
 | Trocar o modo: DS-CNN inglês, DS-CNN português, ResNet inglês, ResNet português | segurar 0,8 s |
 
 Na tela: a palavra (com "?" se a confiança ficar abaixo de 50%), a confiança, a segunda palavra mais provável e
@@ -42,7 +42,7 @@ components/kws/        o reconhecimento, em C puro (compila também no Mac)
   camadas.c            convolução 2D genérica (stride, padding, dilatação, depthwise), linear, média global
   gerado/              pesos e tabelas do MFCC, gerados por exportar/exportar.py (não edite à mão)
 components/oled, mic, botao, placa
-                       drivers copiados do firmware-gravador-voz (commit 6d54773), sem mudanças
+                       drivers copiados do firmware-gravador-voz (commit 6d54773); só o buffer do mic diminuiu
 main/main.c            telas, botão e medição dos tempos
 exportar/              PyTorch -> C (Python, usa o repositório kws-borda)
 teste_host/            teste no Mac: o C contra o PyTorch
@@ -109,4 +109,5 @@ das palavras. Por isso o "?" de baixa confiança e o limiar de silêncio.
 - **Multilingual Spoken Words Corpus (MSWC), português** (Mazumder et al., 2021), CC-BY 4.0: treino da head em
   português. `exportar/heads/avaliacao_pt.npz` traz 130 clipes de avaliação do MSWC (convertidos para 16 kHz,
   int16) para o teste do C.
-- Os drivers em `components/oled`, `mic`, `botao` e `placa` vêm do firmware do gravador de voz do mesmo autor.
+- Os drivers em `components/oled`, `mic`, `botao` e `placa` vêm do firmware do gravador de voz do mesmo autor
+  (no `mic`, só o buffer diminuiu de 64 KB para 16 KB, para sobrar memória para a rede).

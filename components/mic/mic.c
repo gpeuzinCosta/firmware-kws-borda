@@ -27,8 +27,9 @@ static const char *TAG = "mic";
 #define MIC_DMA_DESC       6
 #define MIC_DMA_QUADROS    256
 
-/* Buffer entre a task de captura e o gravador: 64 KB = ~2 s de áudio. */
-#define MIC_BUFFER_BYTES   (64 * 1024)
+/* Buffer entre a task de captura e quem lê: 16 KB = 0,5 s de áudio. No gravador são 64 KB, para aguentar
+ * uma demora do cartão SD; aqui não há cartão, e a memória vai para a rede (firmware-kws-borda). */
+#define MIC_BUFFER_BYTES   (16 * 1024)
 
 /* Descarta o começo: o INMP441 leva alguns ms para estabilizar ao ligar. */
 #define MIC_DESCARTE_MS    200

@@ -1,7 +1,7 @@
 /*
  * Demonstração do trabalho kws-borda no gravador: fala um comando, o ESP32 reconhece e mostra a palavra no OLED.
  *
- *   clique curto        ouve 1,5 s, reconhece e mostra a palavra, a confiança e os tempos (MFCC e rede)
+ *   clique curto        ouve 2 s, reconhece e mostra a palavra, a confiança e os tempos (MFCC e rede)
  *   segurar 0,8 s       troca o modo: DS-CNN EN -> DS-CNN PT -> ResNet EN -> ResNet PT
  *
  * Tudo roda no próprio ESP32 (sem Wi-Fi, sem computador): MFCC, rede e head, em float32 (components/kws).
@@ -25,7 +25,8 @@
 
 static const char *TAG = "kws";
 
-#define OUVIR_MS            1500        /* janela de gravação; a rede usa o 1 s com mais energia */
+#define OUVIR_MS            2000        /* janela de gravação; a rede usa o 1 s com mais energia */
+#define PULAR_MS            150         /* ignorado logo depois do clique: o som do botão e a fala apressada */
 #define OUVIR_AMOSTRAS      (KWS_TAXA_HZ * OUVIR_MS / 1000)
 #define SILENCIO_DBFS       (-50.0f)    /* trecho abaixo disso: "(silencio)", nem passa pela rede */
 #define CONFIANCA_MINIMA    0.5f        /* abaixo disso a palavra aparece com "?" */
@@ -111,11 +112,17 @@ static void tela_mensagem(const modo_t *m, const char *grande, const char *peque
 /* Ouvir e reconhecer                                                                                           */
 /* ------------------------------------------------------------------------------------------------------------ */
 
-/* Grava OUVIR_MS a partir de agora. Retorna quantas amostras chegaram. */
+/* Ignora PULAR_MS e grava OUVIR_MS. Retorna quantas amostras chegaram. */
 static size_t ouvir(const modo_t *m)
 {
     int16_t lixo[256];
     while (mic_ler(lixo, 256, 0) > 0) { }         /* descarta o que acumulou enquanto esperava o clique */
+    tela_ouvindo(m, 0, OUVIR_AMOSTRAS);
+    for (size_t pular = KWS_TAXA_HZ * PULAR_MS / 1000; pular > 0; ) {
+        size_t lidas = mic_ler(lixo, pular < 256 ? pular : 256, 500);
+        if (lidas == 0) break;
+        pular -= lidas;
+    }
 
     size_t n = 0;
     int ultima_barra = -1;
