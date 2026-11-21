@@ -1,0 +1,2 @@
+# DevKit ESP32-WROOM-32E: flash de 4 MB, console na UART0 (/dev/cu.usbserial-XXXX).
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y

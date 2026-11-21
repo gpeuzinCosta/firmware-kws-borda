@@ -1,0 +1,14 @@
+# Comum aos dois alvos (esp32 no DevKit, esp32s3 na PCB).
+
+# Console serial a 115200 baud (idf.py monitor)
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
+
+# A rede roda na task principal: pilha maior (o MFCC usa buffers estáticos, mas há folga para printf)
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
+
+# Velocidade: CPU a 240 MHz e otimização de desempenho no projeto todo
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
